@@ -2,11 +2,88 @@
 <html>
 <head>
 	<style type="text/css">
-		html, body { margin: 0; padding: 2px; font-family: "SF Mono"; font-size: 11px; }
-		.msg { background: rgba(0, 0, 0, 0.9); color: #FFF; opacity: 0.5; padding: 3px 6px; border-radius: 2px; }
+		@keyframes slideup {
+			0%   { transform: translateY(50px) }
+			19%  { transform: translateY(50px) }
+			20%  { transform: translateY(49px) }
+			26%  { transform: translateY(49px) }
+			27%  { transform: translateY(48px) }
+			30%  { transform: translateY(48px) }
+			31%  { transform: translateY(47px) }
+			32%  { transform: translateY(47px) }
+			33%  { transform: translateY(46px) }
+			34%  { transform: translateY(46px) }
+			35%  { transform: translateY(45px) }
+			36%  { transform: translateY(45px) }
+			41%  { transform: translateY(40px) }
+			42%  { transform: translateY(38px) }
+			44%  { transform: translateY(36px) }
+			46%  { transform: translateY(32px) }
+			47%  { transform: translateY(31px) }
+			53%  { transform: translateY(19px) }
+			54%  { transform: translateY(18px) }
+			100% { transform: none }
+		}
+
+		html, body { margin: 0; padding: 2px; font-family: "SF Mono"; font-size: 12px; color: white; font-weight: bold; }
+		ul, li { padding: 0; margin: 0; list-style-type: none; }
+		li { margin-bottom: 1px; }
+
+		.fadeout {
+ 			transition: opacity 0.3s ease-out;
+			opacity: 0 !important;
+		}
+
+		.pill {
+			background: #444;
+			color: #FFF;
+			padding: 3px 6px;
+			border-radius: 3px;
+			display: inline-block;
+			opacity: 1;
+		}
+		
+		#content {
+			display: flex;
+			width: 200px;
+			flex-wrap: wrap;
+			align-items: flex-start;
+		}
+		#content > li {
+			animation-name: slideup;
+			animation-duration: 0.5s;
+			margin-right: 1px;
+		}
 	</style>
 </head>
 <body>
-	<span class="msg">77,299 / 12,353</span>
+	<ul id="content">
+		<li>
+			<span id="dateTimeTail" class="pill"></span>
+		</li>
+	</ul>
+
+	<script type="text/javascript">
+		let electron = require('electron'),
+			offset = { x: -30, y: -30 },
+			dateFormat = { hour: 'numeric', minute: 'numeric' }
+
+		let timeoutID = null
+		let	datetime = () => {
+			clearTimeout(timeoutID)
+			dateTimeTail.classList.remove('fadeout')
+			dateTimeTail.innerText = new Date().toLocaleString('en-US', dateFormat)
+			timeoutID = setTimeout(() => dateTimeTail.classList.add('fadeout'), 1500)
+		}
+
+		electron.ipcRenderer.on('ping', (event, pos) => {
+			content.style.transform = 'translate(' + (pos.x + offset.x) + 'px' + ',' + (pos.y + offset.y) + 'px)'
+			datetime()
+		})
+
+		// electron.ipcRenderer.on('script_output', (event, msg) => {
+		// 	$content.insertAdjacentHTML('beforeend', msg.txt.replace(/&quot;/g, '"'))
+		// })
+	</script>
 </body>
 </html>

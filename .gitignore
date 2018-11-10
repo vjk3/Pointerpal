@@ -1,0 +1,10 @@
+node_modules/
+scripts/
+sc/
+test.*
+*.mp4
+*.mov
+*.webm
+*whisker*
+.DS_Store
+*.txt
